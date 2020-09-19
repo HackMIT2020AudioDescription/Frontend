@@ -1,0 +1,87 @@
+<!doctype html>
+
+<title>Audiodesc</title>
+
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+
+<link rel="icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins|Comfortaa">
+<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+
+<style type="text/css">
+	h1 {
+		font-family: 'Comfortaa';
+		font-weight: bold;
+		margin-top: 70px;
+		font-size: 3em;
+	}
+
+	h3 {
+		font-weight: bold;
+		font-size: 1.7em;
+	}
+
+	h5 {
+		color: #3C4D42;
+		font-style: normal; 
+	}
+</style>
+
+<main>
+	<h1 id="name">Audiodesc</h1>
+	<h3 id="intro">An AI powered app that translates the world around you into audio description.</h3>
+	<h5 id="help">Double tap to complete the tutorial and single tap to repeat...</h5>
+	<div id="voice">
+		<div id="visualizer"></div>
+	</div>
+</main>
+
+<script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+<script type="text/javascript">
+
+	const api_key = "AIzaSyCzs0Da1Mooff-yCQA-ihTz5Z6xtfUUMBY"
+
+	const text = `
+				<speak>
+				<emphasis level="strong">Audiodesc</emphasis>
+				<break time="400ms"/>
+				An AI powered app that translates the world around you into audio descriptions.
+				<break time="400ms"/>
+				Double tap to complete the tutorial and single tap to repeat.
+				</speak>`
+
+	// https://cloud.google.com/text-to-speech/docs/ssml
+	let body = {
+		"audioConfig": {
+			"audioEncoding": "LINEAR16",
+			"pitch": 0,
+			"speakingRate": 1
+		},
+		"input": {
+			"ssml": text
+		},
+		"voice": {
+			"languageCode": "en-US",
+			"name": "en-US-Wavenet-I"
+		}
+	}
+
+	axios.post(`https://texttospeech.googleapis.com/v1beta1/text:synthesize?key=${api_key}`, body)
+	.then( response => {
+		const audio = new Audio(`data:audio/wav;base64,${response.data.audioContent}`)
+		document.body.addEventListener("touchstart", () => {
+			audio.play()
+		}, false)
+		return audio
+	})
+	.then( audio => {
+    audio.addEventListener("ended",function() {
+			setTimeout(() => window.location = "http://localhost:8000/camera", 2000)
+    })
+	})
+	.catch( error => console.log(error) )
+
+
+
+</script>

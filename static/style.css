@@ -1,0 +1,27 @@
+/* || GLOBAL VALUES */
+
+@charset "utf-8";
+
+* {
+	box-sizing: border-box;
+	font-family: 'Poppins';
+	z-index: 1;
+	color: #0B2545;
+}
+
+body {
+	background-color: #E9DB3A;
+	display: flex;
+	justify-content: space-around;
+	height: 100%;
+	margin: 0;
+}
+
+main {
+	max-width: 300px;
+	margin-left: 20px;
+	margin-right: 20px;
+}
+
+
+
