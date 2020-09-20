@@ -10,32 +10,67 @@
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
 <style type="text/css">
+	main {
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+
+	main > div {
+		display: flex;
+		flex-direction: row;
+		justify-content: space-around;
+	}
+
 	h1 {
+		max-width: 300px;
 		font-family: 'Comfortaa';
 		font-weight: bold;
-		margin-top: 70px;
 		font-size: 3em;
 	}
 
 	h3 {
+		max-width: 300px;
 		font-weight: bold;
 		font-size: 1.7em;
 	}
 
 	h5 {
+		max-width: 300px;
 		color: #3C4D42;
 		font-style: normal; 
+	}
+
+	#voice {
+		display: flex;
+		justify-content: space-around;
+		flex-direction: column;
+	}
+
+	#audio-visualizer {
+		text-align: center;
 	}
 </style>
 
 <main>
-	<h1 id="name">Audiodesc</h1>
-	<h3 id="intro">An AI powered app that translates the world around you into audio description.</h3>
-	<h5 id="help">Double tap to complete the tutorial and single tap to repeat...</h5>
-	<div id="voice">
-		<div id="visualizer"></div>
+	<div id="name">
+		<h1>Audiodesc</h1>
 	</div>
+	<div id="intro">
+		<h3>An AI powered app that translates the world around you into audio description.</h3>
+	</div>
+	<div id="help">
+		<h5>Double tap to complete the tutorial and single tap to repeat...</h5>
+	</div>
+	
 </main>
+<div id="voice">
+	<div id="audio-visualizer">
+		 <svg height="100" width="100">
+		  <circle cx="50" cy="50" r="40" fill="white" fill-opacity="0.4"/>
+		</svg> 
+	</div>
+</div>
 
 <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
 <script type="text/javascript">
@@ -77,7 +112,7 @@
 	})
 	.then( audio => {
     audio.addEventListener("ended",function() {
-			setTimeout(() => window.location = "http://localhost:8000/camera", 2000)
+			setTimeout(() => window.location = `/camera`, 2000)
     })
 	})
 	.catch( error => console.log(error) )

@@ -6,10 +6,18 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 
 <link rel="icon" href="/static/img/favicon.ico" type="image/x-icon"/>
+<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Poppins|Comfortaa">
 <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
 
 <style type="text/css">
+
+  main {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
 	video {
 	  position: fixed;
 	  right: 0;
@@ -17,9 +25,65 @@
 	  min-width: 100%; 
 	  min-height: 100%;
 	}
+
+	#options {
+		min-width: 300px;
+		display: flex;
+		background-color: red;
+		justify-content: space-around;
+		background-color: rgba(233, 219, 58, 0.4);
+		backdrop-filter: blur(5px);
+		border-radius: 4px;
+    max-width: 300px;
+	}
+
+	#options > div {
+		padding: 17px 10px 10px 10px;
+	}
+
+	#options > div > i {
+		color: #0B2545;
+	}
+
+	#help {
+		text-align: center;
+		background-color: rgba(233, 219, 58, 0.4);
+		backdrop-filter: blur(5px);
+		width: 100%;
+		padding: 10px 0 10px 0;
+	}
+
+	#voice {
+		display: flex;
+		justify-content: space-around;
+		flex-direction: column;
+	}
+
+	#audio-visualizer {
+		text-align: center;
+	}
+
 </style>
 
 <video autoplay playsinline></video>
+
+<main>
+	<div id="options">
+		<div id="share"><i class="material-icons">share</i></div>
+		<div id="recording"><i class="material-icons">videocam</i></div>
+		<div id="map" onclick="redirect('map')"><i class="material-icons">explore</i></div>
+		<div id="youtube"><i class="material-icons">youtube_searched_for</i></div>
+	</div>
+</main>
+<div id="help">Be careful of your surroundings while 
+creating Audio Descriptions!</div>
+<div id="voice">
+	<div id="audio-visualizer">
+		 <svg height="100" width="100">
+		  <circle cx="50" cy="50" r="40" fill="white" fill-opacity="0.4"/>
+		</svg> 
+	</div>
+</div>
 
 <script type="text/javascript">
 
@@ -29,22 +93,47 @@
 	};
 
 	function handleSuccess(stream) {
-	  const video = document.querySelector('video')
-	  const videoTracks = stream.getVideoTracks()
-	  window.stream = stream
-	  video.srcObject = stream
+	  const video = document.querySelector('video');
+	  const videoTracks = stream.getVideoTracks();
+	  console.log('Got stream with constraints:', constraints);
+	  console.log(`Using video device: ${videoTracks[0].label}`);
+	  window.stream = stream;
+	  video.srcObject = stream;
 	}
+
+	function handleError(error) {
+	  if (error.name === 'ConstraintNotSatisfiedError') {
+	    const v = constraints.video;
+	    errorMsg(`The resolution ${v.width.exact}x${v.height.exact} px is not supported by your device.`);
+	  } else if (error.name === 'PermissionDeniedError') {
+	    errorMsg('Permissions have not been granted to use your camera and ' +
+	      'microphone, you need to allow the page access to your devices in ' +
+	      'order for the demo to work.');
+	  }
+	  errorMsg(`getUserMedia error: ${error.name}`, error);
+	}
+
+	function errorMsg(msg, error) {
+	  console.log(msg)
+	  if (typeof error !== 'undefined') {
+	    console.error(error);
+	  }
+	}
+
 
 	document.addEventListener("DOMContentLoaded", ()=>{
 		navigator.mediaDevices.getUserMedia(constraints)
 			.then( stream => {
 			    handleSuccess(stream)
-			    err.target.disabled = true;
+		    err.target.disabled = true;
 			})
 			.catch( err => {
-				console.log(err)
+				handleError(err)
 			})
 	})
 
+    function redirect(route) {
+    	window.location = `/${route}`;
+    }
 
 </script>
